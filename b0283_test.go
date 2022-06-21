@@ -1,4 +1,4 @@
-package main
+package b0283
 
 import (
 	"testing"
@@ -18,8 +18,8 @@ func TestPanLeft(t *testing.T) {
 		panMax:    180,
 		tiltMax:   180,
 		panStep:   5,
-		panServo:  &servo,
-		tiltServo: &servo,
+		PanServo:  &servo,
+		TiltServo: &servo,
 	}
 
 	want := 0 // Should not move beause initial position is fully left
@@ -39,8 +39,8 @@ func TestPanRight(t *testing.T) {
 		panMax:    180,
 		tiltMax:   180,
 		panStep:   5,
-		panServo:  &servo,
-		tiltServo: &servo,
+		PanServo:  &servo,
+		TiltServo: &servo,
 	}
 	want := 5 // Panning right should add [panStep]° to servo position
 

@@ -1,4 +1,4 @@
-package main
+package b0283
 
 import (
 	"math"
@@ -14,13 +14,13 @@ type B0283 struct {
 	tiltMin      int // Maximum tilt (up/down) angle in degrees, 180°.
 	tiltPosition int // Current position in degrees. Fully down is 0°. Fully up is 180°.
 	tiltStep     int // Degrees for each move.
-	panServo     angler
-	tiltServo    angler
+	PanServo     angler
+	TiltServo    angler
 }
 
 func (b *B0283) PanLeft() (newPos int, err error) {
 	nextPos := math.Max(float64(b.panPosition-b.panStep), float64(b.panMin))
-	if err := b.panServo.Angle(int(nextPos)); err != nil {
+	if err := b.PanServo.Angle(int(nextPos)); err != nil {
 		return b.panPosition, err
 	}
 	time.Sleep(10 * time.Millisecond)
@@ -28,7 +28,12 @@ func (b *B0283) PanLeft() (newPos int, err error) {
 }
 
 func (b *B0283) PanRight() (newPos int, err error) {
-	return b.panStep + b.panPosition, nil
+	nextPos := math.Min(float64(b.panPosition+b.panStep), float64(b.panMax))
+	if err := b.PanServo.Angle(int(nextPos)); err != nil {
+		return b.panPosition, err
+	}
+	time.Sleep(10 * time.Millisecond)
+	return int(nextPos), nil
 }
 
 func (b *B0283) TiltUp() (newPos int, err error) {
