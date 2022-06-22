@@ -15,9 +15,10 @@ func TestPanLeft(t *testing.T) {
 	servo := ServoMock{}
 
 	b := B0283{
-		panMax:    180,
-		tiltMax:   180,
-		panStep:   5,
+		PanMax:    180,
+		TiltMax:   180,
+		PanStep:   5,
+		TiltStep:  5,
 		PanServo:  &servo,
 		TiltServo: &servo,
 	}
@@ -36,9 +37,9 @@ func TestPanLeft(t *testing.T) {
 func TestPanRight(t *testing.T) {
 	servo := ServoMock{}
 	b := B0283{
-		panMax:    180,
-		tiltMax:   180,
-		panStep:   5,
+		PanMax:    180,
+		TiltMax:   180,
+		PanStep:   5,
 		PanServo:  &servo,
 		TiltServo: &servo,
 	}

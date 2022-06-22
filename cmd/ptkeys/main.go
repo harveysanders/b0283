@@ -1,15 +1,26 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/eiannone/keyboard"
 	"github.com/googolgl/go-i2c"
 	"github.com/googolgl/go-pca9685"
 	"github.com/harveysanders/b0283"
 )
 
 func main() {
-	log.Print("Hello")
+
+	if err := keyboard.Open(); err != nil {
+		panic(err)
+	}
+	defer func() {
+		_ = keyboard.Close()
+	}()
+
+	fmt.Println("Use arrow keys to pan/tilt platform.")
+	fmt.Println("Press ESC or Ctrl+c to quit.")
 
 	// Create new connection to i2c-bus on 1 line with address 0x40.
 	// Use i2cdetect utility to find device address over the i2c-bus
@@ -26,20 +37,41 @@ func main() {
 	// Sets a single PWM channel 0
 	pca0.SetChannel(0, 0, 130)
 
-	servoVert := pca0.ServoNew(0, nil) // Servo on channel 0
-	servoLR := pca0.ServoNew(1, nil)   // Servo on channel 1
+	servoVertical := pca0.ServoNew(0, nil)   // Servo on channel 0
+	servoHorizontal := pca0.ServoNew(1, nil) // Servo on channel 1
 
 	ptPlatform := b0283.B0283{
-		PanServo:  servoLR,
-		TiltServo: servoVert,
+		PanServo:  servoHorizontal,
+		PanStep:   5,
+		PanMax:    180,
+		TiltServo: servoVertical,
+		TiltStep:  5,
+		TiltMax:   180,
 	}
 
-	// Sample move
-	curPos, err := ptPlatform.PanRight()
-	if err != nil {
-		log.Fatal("pan error:", err)
-	}
+	for {
+		_, key, err := keyboard.GetKey()
+		if err != nil {
+			panic(err)
+		}
 
-	log.Println("Curr pos:", curPos)
+		switch key {
+		case keyboard.KeyArrowUp:
+			ptPlatform.TiltUp()
+
+		case keyboard.KeyArrowDown:
+			ptPlatform.TiltDown()
+
+		case keyboard.KeyArrowLeft:
+			ptPlatform.PanLeft()
+
+		case keyboard.KeyArrowRight:
+			ptPlatform.PanRight()
+		}
+
+		if key == keyboard.KeyEsc || key == keyboard.KeyCtrlC {
+			break
+		}
+	}
 
 }
